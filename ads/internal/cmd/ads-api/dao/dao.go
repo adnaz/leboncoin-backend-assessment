@@ -12,6 +12,8 @@ type Store interface {
 	CreateAd(ctx context.Context, req CreateAdRequest) (domain.AdID, error)
 	// GetAdByID returns a single ad, or ErrNotFound.
 	GetAdByID(ctx context.Context, id domain.AdID) (domain.Ad, error)
+	// DeleteAd deletes the ad only if it belongs to ownerID. It returns ErrNotFound both when no ad has this id and when the ad belongs to someone else, so a caller cannot tell the two apart.
+	DeleteAd(ctx context.Context, id domain.AdID, ownerID domain.UserID) error
 	// SearchAds returns all ads matching the filters.
 	SearchAds(ctx context.Context, req SearchAdsRequest) ([]domain.Ad, error)
 }

@@ -43,6 +43,11 @@ func (m *Mock) GetAdByID(ctx context.Context, id domain.AdID) (domain.Ad, error)
 	return ad, args.Error(1)
 }
 
+// DeleteAd returns the error set on the mock.
+func (m *Mock) DeleteAd(ctx context.Context, id domain.AdID, ownerID domain.UserID) error {
+	return m.Called(ctx, id, ownerID).Error(0)
+}
+
 // CreateAd returns the ad and the error set on the mock.
 func (m *Mock) CreateAd(ctx context.Context, req adsdao.CreateAdRequest) (domain.AdID, error) {
 	args := m.Called(ctx, req)
