@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci: # job name = the status check to require in branch protection
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod # module and build caches are on by default
+      - uses: golangci/golangci-lint-action@v9 # runs golangci-lint v2 (.golangci.yml is v2), formatters included
+        with:
+          version: v2.14.0 # same as local, so CI and laptops agree
+      - run: go mod tidy -diff # non-zero with a diff if go.mod/go.sum are not tidy; mutates nothing
+      - run: go build ./...
+      - run: go test -race ./...
+      # Optional, zero-footprint OpenAPI lint (go run leaves go.mod untouched); enable once the spec is caught up:
+      # - run: go run github.com/daveshanley/vacuum@latest lint --no-style -d ads/internal/cmd/ads-api/specs/openapi.yaml
