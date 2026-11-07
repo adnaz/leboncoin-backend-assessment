@@ -1,3 +1,4 @@
+// Package middleware carries the authenticated user id from the Authorization header into the request context.
 package middleware
 
 import (

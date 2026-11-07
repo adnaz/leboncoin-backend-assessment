@@ -1,3 +1,4 @@
+// Package httpserver runs an http.Handler with sane timeouts and a graceful shutdown, shared by the ads and users APIs.
 package httpserver
 
 import (

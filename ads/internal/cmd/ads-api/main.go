@@ -1,3 +1,4 @@
+// Package main starts the ads API: it loads the configuration, opens the database and the identity client, and serves HTTP until the process is asked to stop.
 package main
 
 import (

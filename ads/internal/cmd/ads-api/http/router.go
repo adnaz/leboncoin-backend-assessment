@@ -1,3 +1,4 @@
+// Package http exposes the usecases over HTTP: routing, request decoding and the mapping of errors to status codes.
 package http
 
 import (

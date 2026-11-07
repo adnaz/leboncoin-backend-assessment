@@ -1,3 +1,4 @@
+// Package postgres implements dao.DAO on PostgreSQL through database/sql and the pgx driver.
 package postgres
 
 import (
