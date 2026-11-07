@@ -66,6 +66,26 @@ func TestMock_GetAdByID(t *testing.T) {
 	})
 }
 
+func TestMock_DeleteAd(t *testing.T) {
+	t.Run("returns nil when configured", func(t *testing.T) {
+		m := mock.New(t)
+		m.On("DeleteAd", ctx, domain.AdID(42), domain.UserID("user-1")).Return(nil)
+
+		err := m.DeleteAd(ctx, 42, "user-1")
+
+		require.NoError(t, err)
+	})
+
+	t.Run("returns ErrNotFound", func(t *testing.T) {
+		m := mock.New(t)
+		m.On("DeleteAd", ctx, domain.AdID(99), domain.UserID("user-1")).Return(adsdao.ErrNotFound)
+
+		err := m.DeleteAd(ctx, 99, "user-1")
+
+		assert.ErrorIs(t, err, adsdao.ErrNotFound)
+	})
+}
+
 func TestMock_CreateAd(t *testing.T) {
 	t.Run("returns generated ID", func(t *testing.T) {
 		m := mock.New(t)

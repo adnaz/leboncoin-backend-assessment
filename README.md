@@ -39,6 +39,7 @@ There are 2 entities in this sample:
 |--------|---------------|------|-----------------------------------------------------------------------------------|
 | `POST` | `/ads`        | yes | Create an ad                                                                      |
 | `GET` | `/ads/{id}`   | no | Get a single ad                                                                   |
+| `DELETE` | `/ads/{id}`   | yes | Delete one of your ads (`404` if it is not yours or already deleted) |
 | `GET` | `/ads`        | no | List ads (filterable by `title`, `user_id`, `min_price_cents`, `max_price_cents`) |
 | `POST` | `/ads/import` | yes | Bulk ad import                                                                    |
 
