@@ -1,3 +1,4 @@
+// Package usecase holds the business rules of the ads API. Each usecase is a function built from its dependencies, so handlers depend on behaviour, not on types.
 package usecase
 
 import (

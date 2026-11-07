@@ -1,3 +1,4 @@
+// Package mock is a testify-based dao.DAO for usecase tests. Unexpected calls fail the test, so every call a usecase makes must be expected.
 package mock
 
 import (

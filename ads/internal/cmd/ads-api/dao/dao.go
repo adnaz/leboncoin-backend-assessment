@@ -1,3 +1,4 @@
+// Package dao defines how ads are stored and read, independently of the database, so usecases can be tested against a mock.
 package dao
 
 import (

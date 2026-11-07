@@ -48,7 +48,7 @@ func TestHandlerCreateAd(t *testing.T) {
 	}
 
 	t.Run("returns 201 with ID on success", func(t *testing.T) {
-		srv := newCreateAdServer(func(_ context.Context, req usecase.CreateAdRequest) (domain.AdID, error) {
+		srv := newCreateAdServer(func(_ context.Context, _ usecase.CreateAdRequest) (domain.AdID, error) {
 			return domain.AdID(7), nil
 		})
 		defer srv.Close()

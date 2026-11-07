@@ -1,3 +1,4 @@
+// Package domain holds the ad model and its identifiers, shared by every layer of the API.
 package domain
 
 import (

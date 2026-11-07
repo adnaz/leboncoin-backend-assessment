@@ -24,7 +24,7 @@ func TestMock_SearchAds(t *testing.T) {
 
 		got, err := m.SearchAds(ctx, req)
 
-		require.Error(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, want, got)
 	})
 
@@ -37,7 +37,7 @@ func TestMock_SearchAds(t *testing.T) {
 
 		got, err := m.SearchAds(ctx, req)
 
-		assert.ErrorIs(t, err, boom)
+		require.ErrorIs(t, err, boom)
 		assert.Nil(t, got)
 	})
 }
@@ -141,7 +141,7 @@ func TestMock_Begin(t *testing.T) {
 
 		tx, err := m.Begin(ctx)
 
-		assert.ErrorIs(t, err, boom)
+		require.ErrorIs(t, err, boom)
 		assert.Nil(t, tx)
 	})
 }

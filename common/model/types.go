@@ -1,3 +1,4 @@
+// Package model holds the identifiers shared between the ads and users services.
 package model
 
 // UserID uniquely identifies a user.

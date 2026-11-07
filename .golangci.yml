@@ -1,0 +1,52 @@
+version: "2"
+
+linters:
+  default: standard # errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - errorlint      # errors.Is/As instead of == / type switch on wrapped errors
+    - errname        # sentinels named ErrXxx, error types XxxError
+    - gosec          # security smells: SQL string building, weak rand, file perms
+    - misspell
+    - revive         # package comments, unused params, blank imports, naming
+    - gocritic       # stdlib misuse checks vet does not do
+    - unparam        # unused or always-identical params and results
+    - unconvert      # no-op conversions (domain.UserID is an alias of model.UserID)
+    - bodyclose      # resp.Body closed on every path
+    - noctx          # http.NewRequestWithContext; tests excluded below
+    - rowserrcheck   # rows.Err() checked after iteration
+    - sqlclosecheck  # rows/stmt closed on every path
+    - unqueryvet     # no SELECT * in SQL strings
+    - testifylint    # require vs assert for errors, Equal arg order, ErrorIs
+    - usetesting     # t.Context()/t.Setenv/t.TempDir instead of hand-rolled
+    - thelper        # helpers call t.Helper() first
+    - nolintlint     # every //nolint names a linter and is still needed
+    - nilerr         # returning nil when err != nil
+    - perfsprint     # strconv/concat instead of fmt.Sprintf on hot paths
+    - intrange       # for i := range n
+    - durationcheck  # time.Duration * time.Duration mistakes
+    - errchkjson     # json.Marshal errors on types that can fail
+    - sloglint       # consistent slog key/value usage
+    - usestdlibvars  # http.MethodGet, http.StatusOK instead of literals
+    - gocheckcompilerdirectives # malformed //go: directives
+  exclusions:
+    presets:
+      - std-error-handling # v1's default: Close/print returns unchecked; bodyclose/sqlclosecheck/rowserrcheck still enforce the closes that matter
+    paths:
+      - ^users/ # out of scope per INSTRUCTIONS.md: must not be modified
+    rules:
+      - path: _test\.go
+        linters:
+          - noctx # tests use http.Get/NewRequest on purpose
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    paths:
+      - ^users/ # linters.exclusions does not cover formatters
+
+issues:
+  # defaults hide repeats (max-same-issues: 3) — CI and laptops must see every issue
+  max-same-issues: 0
+  max-issues-per-linter: 0

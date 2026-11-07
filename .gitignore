@@ -12,6 +12,7 @@ go.work.sum
 
 # Editors and IDEs.
 ../.idea/
+.idea/
 .vscode/
 *.swp
 
