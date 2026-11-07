@@ -47,12 +47,12 @@ func TestHandlerDeleteAd(t *testing.T) {
 		})
 		defer srv.Close()
 
-		resp := deleteAd(t, srv.URL+"/ads/42", "user-1")
+		resp := deleteAd(t, srv.URL+"/ads/42", "00000000-0000-0000-0000-000000000001")
 		defer resp.Body.Close()
 
 		assert.Equal(t, http.StatusNoContent, resp.StatusCode)
 		assert.Equal(t, domain.AdID(42), gotID)
-		assert.Equal(t, domain.UserID("user-1"), gotOwner)
+		assert.Equal(t, domain.UserID("00000000-0000-0000-0000-000000000001"), gotOwner)
 	})
 
 	t.Run("returns 401 when Authorization header is missing", func(t *testing.T) {
@@ -75,7 +75,7 @@ func TestHandlerDeleteAd(t *testing.T) {
 		})
 		defer srv.Close()
 
-		resp := deleteAd(t, srv.URL+"/ads/not-a-number", "user-1")
+		resp := deleteAd(t, srv.URL+"/ads/not-a-number", "00000000-0000-0000-0000-000000000001")
 		defer resp.Body.Close()
 
 		assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
@@ -87,7 +87,7 @@ func TestHandlerDeleteAd(t *testing.T) {
 		})
 		defer srv.Close()
 
-		resp := deleteAd(t, srv.URL+"/ads/99", "user-1")
+		resp := deleteAd(t, srv.URL+"/ads/99", "00000000-0000-0000-0000-000000000001")
 		defer resp.Body.Close()
 
 		assert.Equal(t, http.StatusNotFound, resp.StatusCode)
@@ -99,7 +99,7 @@ func TestHandlerDeleteAd(t *testing.T) {
 		})
 		defer srv.Close()
 
-		resp := deleteAd(t, srv.URL+"/ads/1", "user-1")
+		resp := deleteAd(t, srv.URL+"/ads/1", "00000000-0000-0000-0000-000000000001")
 		defer resp.Body.Close()
 
 		assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)

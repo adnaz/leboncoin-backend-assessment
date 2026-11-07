@@ -62,7 +62,7 @@ curl -s -X POST http://localhost:8080/ads \
 
 ## Authentication
 
-To pass authentication information to a call, simply add the `Authorization` header with the user ID in plain text.
+To pass authentication information to a call, simply add the `Authorization` header with the user ID in plain text. A missing or invalid user ID is a `401`.
 
 It will be extracted by the service.
 
