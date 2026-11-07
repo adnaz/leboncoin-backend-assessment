@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -61,6 +62,20 @@ func TestHandlerCreateAd(t *testing.T) {
 		var got createAdResponse
 		require.NoError(t, json.NewDecoder(resp.Body).Decode(&got))
 		assert.Equal(t, int64(7), got.ID)
+	})
+
+	t.Run("returns 429 with Retry-After when the quota is exceeded", func(t *testing.T) {
+		retryAt := time.Now().Add(90 * time.Second)
+		srv := newCreateAdServer(func(_ context.Context, _ usecase.CreateAdRequest) (domain.AdID, error) {
+			return 0, usecase.QuotaExceededError{RetryAt: retryAt}
+		})
+		defer srv.Close()
+
+		resp := postJSON(t, srv.URL+"/ads", validBody, "user-1")
+		defer resp.Body.Close()
+
+		assert.Equal(t, http.StatusTooManyRequests, resp.StatusCode)
+		assert.Contains(t, []string{"90", "91"}, resp.Header.Get("Retry-After"))
 	})
 
 	t.Run("passes authenticated user ID as owner to the usecase", func(t *testing.T) {
