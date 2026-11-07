@@ -37,7 +37,7 @@ There are 2 entities in this sample:
 
 | Method | Path          | Auth | Description                                                                       |
 |--------|---------------|------|-----------------------------------------------------------------------------------|
-| `POST` | `/ads`        | yes | Create an ad                                                                      |
+| `POST` | `/ads`        | yes | Create an ad (at most 5 per rolling 24 h, then `429` with `Retry-After`)            |
 | `GET` | `/ads/{id}`   | no | Get a single ad, with its owner's username (`null` if the identity service cannot answer) |
 | `DELETE` | `/ads/{id}`   | yes | Delete one of your ads (`404` if it is not yours or already deleted) |
 | `GET` | `/ads`        | no | List ads (filterable by `title`, `user_id`, `min_price_cents`, `max_price_cents`) |

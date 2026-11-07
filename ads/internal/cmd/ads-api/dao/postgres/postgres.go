@@ -107,6 +107,50 @@ func (d *DAO) Rollback() error {
 	return nil
 }
 
+// LockOwner takes a transaction-scoped advisory lock on the owner, released at Commit or Rollback. Outside a transaction the lock would be released immediately, so it is refused.
+func (d *DAO) LockOwner(ctx context.Context, ownerID domain.UserID) error {
+	if d.tx == nil {
+		return errors.New("unable to lock outside a transaction")
+	}
+
+	if _, err := d.tx.ExecContext(ctx, `SELECT pg_advisory_xact_lock(hashtext($1))`, string(ownerID)); err != nil {
+		return fmt.Errorf("unable to lock owner: %w", err)
+	}
+
+	return nil
+}
+
+// RecentAdCreations returns the creation times of the newest ads of ownerID created within the last window, newest first, at most limit of them.
+func (d *DAO) RecentAdCreations(ctx context.Context, ownerID domain.UserID, window time.Duration, limit int) ([]time.Time, error) {
+	const query = `
+		SELECT created_at FROM ads
+		WHERE user_id = $1::uuid AND created_at >= now() - make_interval(secs => $2)
+		ORDER BY created_at DESC
+		LIMIT $3`
+
+	rows, err := d.runner().QueryContext(ctx, query, string(ownerID), int64(window/time.Second), limit)
+	if err != nil {
+		return nil, fmt.Errorf("unable to list recent ad creations: %w", err)
+	}
+	defer func() { _ = rows.Close() }()
+
+	var times []time.Time
+	for rows.Next() {
+		var t time.Time
+		if err := rows.Scan(&t); err != nil {
+			return nil, fmt.Errorf("unable to scan ad creation time: %w", err)
+		}
+
+		times = append(times, t)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("unable to read ad creation times: %w", err)
+	}
+
+	return times, nil
+}
+
 // SearchAds returns all ads matching the filters.
 func (d *DAO) SearchAds(ctx context.Context, req adsdao.SearchAdsRequest) ([]domain.Ad, error) {
 	const query = `
