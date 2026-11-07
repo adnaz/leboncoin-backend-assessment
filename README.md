@@ -25,7 +25,7 @@ The API needs an up-and-running postgres database, which can be launched via the
 docker compose up -d
 ```
 
-This starts PostgreSQL with the schema and seed data already applied, as well as the `ads` api.
+This starts PostgreSQL with the schema and seed data already applied, as well as the `ads` api and the `users` api the `ads` api asks for owner nicknames; the `ads` api serves without it (`username` is then `null`).
 
 ## Model
 
@@ -38,7 +38,7 @@ There are 2 entities in this sample:
 | Method | Path          | Auth | Description                                                                       |
 |--------|---------------|------|-----------------------------------------------------------------------------------|
 | `POST` | `/ads`        | yes | Create an ad                                                                      |
-| `GET` | `/ads/{id}`   | no | Get a single ad                                                                   |
+| `GET` | `/ads/{id}`   | no | Get a single ad, with its owner's username (`null` if the identity service cannot answer) |
 | `DELETE` | `/ads/{id}`   | yes | Delete one of your ads (`404` if it is not yours or already deleted) |
 | `GET` | `/ads`        | no | List ads (filterable by `title`, `user_id`, `min_price_cents`, `max_price_cents`) |
 | `POST` | `/ads/import` | yes | Bulk ad import                                                                    |

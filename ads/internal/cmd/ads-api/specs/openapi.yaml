@@ -3,7 +3,7 @@ openapi: "3.0.3"
 info:
   title: Ads API
   description: Classified ads — list, read, create, and delete ads.
-  version: "1.1.0"
+  version: "1.2.0"
 
 servers:
   - url: http://localhost:8080
@@ -108,7 +108,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Ad"
+                $ref: "#/components/schemas/AdDetail"
         "400":
           description: adID is not a valid integer.
         "404":
@@ -175,6 +175,18 @@ components:
           type: string
           format: date-time
           example: "2024-01-15T10:00:00Z"
+
+    AdDetail:
+      allOf:
+        - $ref: "#/components/schemas/Ad"
+        - type: object
+          required: [username]
+          properties:
+            username:
+              type: string
+              nullable: true
+              description: Owner's nickname from the identity service. Null when the service could not answer or no longer knows the owner; the ad is still returned.
+              example: alice
 
     ListAdsResponse:
       type: object
