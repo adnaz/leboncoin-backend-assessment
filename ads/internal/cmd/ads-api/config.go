@@ -15,15 +15,18 @@ type Config struct {
 	IdentityURL string
 	// IdentityTimeout bounds every call to the identity service.
 	IdentityTimeout time.Duration
+	// IdentityCacheTTL is how long a nickname answered by the identity service is reused before being asked again.
+	IdentityCacheTTL time.Duration
 }
 
 // Load reads the configuration from the environment.
 func Load() Config {
 	return Config{
-		HTTPAddr:        text("HTTP_ADDR", ":8080"),
-		DatabaseURL:     text("DATABASE_URL", "postgres://ads:ads@localhost:5432/ads?sslmode=disable"),
-		IdentityURL:     text("IDENTITY_URL", "http://localhost:8081"),
-		IdentityTimeout: duration("IDENTITY_TIMEOUT", 2*time.Second),
+		HTTPAddr:         text("HTTP_ADDR", ":8080"),
+		DatabaseURL:      text("DATABASE_URL", "postgres://ads:ads@localhost:5432/ads?sslmode=disable"),
+		IdentityURL:      text("IDENTITY_URL", "http://localhost:8081"),
+		IdentityTimeout:  duration("IDENTITY_TIMEOUT", 2*time.Second),
+		IdentityCacheTTL: duration("IDENTITY_CACHE_TTL", time.Minute),
 	}
 }
 

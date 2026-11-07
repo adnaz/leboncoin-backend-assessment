@@ -8,6 +8,7 @@ services:
       DATABASE_URL: postgres://ads:ads@ads-database:5432/ads?sslmode=disable
       IDENTITY_URL: http://users-api:8081
       IDENTITY_TIMEOUT: 500ms
+      IDENTITY_CACHE_TTL: 60s
     ports:
       - "8080:8080"
     depends_on:
