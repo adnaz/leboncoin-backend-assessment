@@ -9,6 +9,7 @@ import (
 	"github.mpi-internal.com/leboncoin/backend-hiring-assessment/ads/internal/cmd/ads-api/http"
 	"github.mpi-internal.com/leboncoin/backend-hiring-assessment/ads/internal/cmd/ads-api/usecase"
 	"github.mpi-internal.com/leboncoin/backend-hiring-assessment/common/httpserver"
+	"github.mpi-internal.com/leboncoin/backend-hiring-assessment/users/pkg/api"
 )
 
 func main() {
@@ -32,9 +33,11 @@ func run() error {
 		}
 	}()
 
+	users := api.NewClient(cfg.IdentityURL, cfg.IdentityTimeout)
+
 	router := http.NewRouter(http.Usecases{
 		CreateAd: usecase.NewCreateAdFunc(adDAO),
-		GetAd:    usecase.NewGetAdByIDFunc(adDAO),
+		GetAd:    usecase.NewGetAdByIDFunc(adDAO, users),
 		DeleteAd: usecase.NewDeleteAdFunc(adDAO),
 		ListAds:  usecase.NewListAdsFunc(adDAO),
 	})
