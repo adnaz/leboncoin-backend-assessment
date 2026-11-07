@@ -2,8 +2,8 @@ openapi: "3.0.3"
 
 info:
   title: Ads API
-  description: Classified ads — list, read, and create ads.
-  version: "1.0.0"
+  description: Classified ads — list, read, create, and delete ads.
+  version: "1.1.0"
 
 servers:
   - url: http://localhost:8080
@@ -115,7 +115,31 @@ paths:
           description: No ad exists with this ID.
         "500":
           description: Unexpected server error.
-
+    delete:
+      summary: Delete an ad you own
+      operationId: deleteAd
+      tags: [ads]
+      security:
+        - userID: []
+      parameters:
+        - name: adID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 1
+      responses:
+        "204":
+          description: Ad deleted.
+        "400":
+          description: adID is not a valid integer.
+        "401":
+          description: Missing Authorization header.
+        "404":
+          description: No ad with this ID belongs to the caller. Also returned when the ad was already deleted, so a client retrying a DELETE after a timeout should treat 404 as success.
+        "500":
+          description: Unexpected server error.
 components:
   securitySchemes:
     userID:
