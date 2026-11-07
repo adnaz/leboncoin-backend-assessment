@@ -8,6 +8,33 @@ Once you are satisfied with your work, please send your public repository url to
 
 Please refer to [these instructions](INSTRUCTIONS.md).
 
+## Assessment items
+
+One pull request per item, squash-merged in order. Each PR body has the reasoning, the alternatives and what was measured on the compose stack.
+
+| # | Item | PR |
+|---|------|----|
+| 1 | Fix the `GetAdByID` usecase | [#1](https://github.com/adnaz/leboncoin-backend-assessment/pull/1) |
+| 2 | `DELETE /ads/{id}` endpoint, usecase and dao method | [#2](https://github.com/adnaz/leboncoin-backend-assessment/pull/2) |
+| 3 | `username` in `GET /ads/{id}` from the user service | [#3](https://github.com/adnaz/leboncoin-backend-assessment/pull/3) |
+| 4 | `price_cents` → `price` as a float: [the answer](docs/price-as-float.md) | [#4](https://github.com/adnaz/leboncoin-backend-assessment/pull/4) |
+| 5 | Bulk import: one transaction per batch, idempotency proposed | [#5](https://github.com/adnaz/leboncoin-backend-assessment/pull/5) |
+| 6 | Quota of 5 ads per rolling 24 h on `POST /ads` | [#6](https://github.com/adnaz/leboncoin-backend-assessment/pull/6) |
+
+Improvements after the six items:
+
+| Improvement | PR |
+|-------------|----|
+| CI (lint, tidy, build, tests with race), lint config, green test baseline, `main` protected by the `ci` check | [#7](https://github.com/adnaz/leboncoin-backend-assessment/pull/7) |
+| Nickname cache and cap on identity calls in flight for `GET /ads/{id}` | [#8](https://github.com/adnaz/leboncoin-backend-assessment/pull/8) |
+| `401` instead of `500` on an invalid `Authorization` header, checked once in the middleware | [#9](https://github.com/adnaz/leboncoin-backend-assessment/pull/9) |
+
+What I would do next, in order:
+
+- **Pagination on `GET /ads`.** The list runs `SELECT … FROM ads WHERE …` with no `LIMIT` and no `ORDER BY`. Fine with 100 seed rows; on a real table every call reads and serialises the whole table, on the most-read endpoint, and the row order is whatever the database returns. `limit`/`offset` plus `has_more`, newest first, with an index on `(created_at DESC, id DESC)` so "newest first, first 20" is an index read, not a sort. Opt-in: a client that sends no parameters keeps getting everything.
+- **One JSON error body for every error.** Today `400`, `401`, `404`, `429` and `500` are bare status codes with an empty body. One small shape such as `{"status": 400, "title": "invalid body", "detail": "price_cents must be positive"}`, written by one helper every handler calls. The `429` would then also say when the user can publish again, which is what a mobile app shows.
+- **Read, write and idle timeouts on the shared HTTP server.** `common/httpserver` sets only `ReadHeaderTimeout`. Without `ReadTimeout` a client sending a body slowly holds a connection and a goroutine for as long as it likes; without `WriteTimeout` a client reading slowly does the same; without `IdleTimeout` unused keep-alive connections stay open. Three fields on `http.Server`, and the users API gets them too.
+
 # Ads API
 
 A small Go HTTP API around a single domain: *ads* (classified ads).
