@@ -9,7 +9,7 @@ import (
 )
 
 type (
-	// GetAdByIDFunc returns a single ad. It fails with ErrorCodeNotFound when no ad matches the identifier.
+	// GetAdByIDFunc returns a single ad. It fails with adsdao.ErrNotFound when no ad matches the identifier.
 	GetAdByIDFunc func(ctx context.Context, id domain.AdID) (domain.Ad, error)
 
 	getAdByID struct {
@@ -23,26 +23,10 @@ func NewGetAdByIDFunc(adDAO adsdao.DAO) GetAdByIDFunc {
 }
 
 func (uc getAdByID) getAdByID(ctx context.Context, id domain.AdID) (domain.Ad, error) {
-	found, err := uc.adDAO.GetAdByID(ctx, 0)
+	found, err := uc.adDAO.GetAdByID(ctx, id)
 	if err != nil {
 		return domain.Ad{}, fmt.Errorf("unable to get ad %s: %w", id, err)
 	}
 
 	return found, nil
 }
-
-// TODO: remove this code
-// func (uc getAdByID) getAdByIDLegacy(ctx context.Context, id model.AdID) (model.Ad, error) {
-// 	ads, err := uc.adDAO.SearchAds(ctx, adsdao.SearchAdsRequest{})
-// 	if err != nil {
-// 		return model.Ad{}, fmt.Errorf("unable to list ads: %w", err)
-// 	}
-//
-// 	for _, ad := range ads {
-// 		if ad.ID == id {
-// 			return ad, nil
-// 		}
-// 	}
-//
-// 	return model.Ad{}, adsdao.ErrNotFound
-// }
