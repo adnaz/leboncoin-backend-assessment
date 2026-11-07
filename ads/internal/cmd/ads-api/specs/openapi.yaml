@@ -85,7 +85,7 @@ paths:
         "400":
           description: Malformed or unknown request body field.
         "401":
-          description: Missing Authorization header.
+          description: Missing or invalid Authorization header.
         "429":
           description: The user already published 5 ads in the last 24 hours. Does not apply to POST /ads/import.
           headers:
@@ -142,7 +142,7 @@ paths:
         "400":
           description: adID is not a valid integer.
         "401":
-          description: Missing Authorization header.
+          description: Missing or invalid Authorization header.
         "404":
           description: No ad with this ID belongs to the caller. Also returned when the ad was already deleted, so a client retrying a DELETE after a timeout should treat 404 as success.
         "500":
@@ -153,7 +153,7 @@ components:
       type: apiKey
       in: header
       name: Authorization
-      description: The caller's user ID. No token validation is performed — the value is used as-is as the owner identifier.
+      description: The caller's user ID. No token validation is performed — the value is used as-is as the owner identifier. A missing or invalid value is rejected with 401.
 
   schemas:
     Ad:

@@ -35,7 +35,7 @@ func TestHandlerImportAds(t *testing.T) {
 			{Title: "scooter", PriceCents: 8000, PhotoURL: "https://example.com/scooter.jpg"},
 			{Title: "car", PriceCents: 200000, PhotoURL: "https://example.com/car.jpg"},
 		}}
-		resp := postJSON(t, srv.URL+"/ads/import", body, "user-1")
+		resp := postJSON(t, srv.URL+"/ads/import", body, "00000000-0000-0000-0000-000000000001")
 		defer resp.Body.Close()
 
 		assert.Equal(t, http.StatusCreated, resp.StatusCode)
@@ -57,13 +57,13 @@ func TestHandlerImportAds(t *testing.T) {
 			{Title: "bike", PriceCents: 5000, PhotoURL: "https://example.com/bike.jpg"},
 			{Title: "scooter", PriceCents: 8000, PhotoURL: "https://example.com/scooter.jpg"},
 		}}
-		resp := postJSON(t, srv.URL+"/ads/import", body, "user-42")
+		resp := postJSON(t, srv.URL+"/ads/import", body, "00000000-0000-0000-0000-000000000042")
 		defer resp.Body.Close()
 
 		require.Equal(t, http.StatusCreated, resp.StatusCode)
 		require.Len(t, received, 2)
-		assert.Equal(t, domain.UserID("user-42"), received[0].OwnerID)
-		assert.Equal(t, domain.UserID("user-42"), received[1].OwnerID)
+		assert.Equal(t, domain.UserID("00000000-0000-0000-0000-000000000042"), received[0].OwnerID)
+		assert.Equal(t, domain.UserID("00000000-0000-0000-0000-000000000042"), received[1].OwnerID)
 	})
 
 	t.Run("returns 201 with empty IDs when body has no ads", func(t *testing.T) {
@@ -73,7 +73,7 @@ func TestHandlerImportAds(t *testing.T) {
 		})
 		defer srv.Close()
 
-		resp := postJSON(t, srv.URL+"/ads/import", importAdsBody{Ads: []createAdBody{}}, "user-1")
+		resp := postJSON(t, srv.URL+"/ads/import", importAdsBody{Ads: []createAdBody{}}, "00000000-0000-0000-0000-000000000001")
 		defer resp.Body.Close()
 
 		assert.Equal(t, http.StatusCreated, resp.StatusCode)
@@ -105,7 +105,7 @@ func TestHandlerImportAds(t *testing.T) {
 
 		req, err := http.NewRequest(http.MethodPost, srv.URL+"/ads/import", nil)
 		require.NoError(t, err)
-		req.Header.Set("Authorization", "user-1")
+		req.Header.Set("Authorization", "00000000-0000-0000-0000-000000000001")
 
 		resp, err := http.DefaultClient.Do(req)
 		require.NoError(t, err)
@@ -125,7 +125,7 @@ func TestHandlerImportAds(t *testing.T) {
 			{Title: "scooter", PriceCents: 8000, PhotoURL: "https://example.com/scooter.jpg"},
 			{Title: "car", PriceCents: 200000, PhotoURL: "https://example.com/car.jpg"},
 		}}
-		resp := postJSON(t, srv.URL+"/ads/import", body, "user-1")
+		resp := postJSON(t, srv.URL+"/ads/import", body, "00000000-0000-0000-0000-000000000001")
 		defer resp.Body.Close()
 
 		assert.Equal(t, http.StatusInternalServerError, resp.StatusCode)
