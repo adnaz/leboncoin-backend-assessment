@@ -320,3 +320,53 @@ func TestTransaction(t *testing.T) {
 		require.Error(t, dao.Rollback())
 	})
 }
+
+func TestLockOwner(t *testing.T) {
+	ctx := context.Background()
+
+	t.Run("locks inside a transaction", func(t *testing.T) {
+		dao, mock := newMockDAO(t)
+		mock.ExpectBegin()
+		mock.ExpectExec("pg_advisory_xact_lock").WithArgs("user-1").WillReturnResult(sqlmock.NewResult(0, 0))
+		tx, err := dao.Begin(ctx)
+		require.NoError(t, err)
+
+		require.NoError(t, tx.LockOwner(ctx, "user-1"))
+		require.NoError(t, mock.ExpectationsWereMet())
+	})
+
+	t.Run("refuses to lock outside a transaction", func(t *testing.T) {
+		dao, _ := newMockDAO(t)
+
+		require.Error(t, dao.LockOwner(ctx, "user-1"))
+	})
+}
+
+func TestRecentAdCreations(t *testing.T) {
+	ctx := context.Background()
+	t1 := time.Date(2024, 1, 2, 0, 0, 0, 0, time.UTC)
+	t2 := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	t.Run("returns the creation times newest first", func(t *testing.T) {
+		dao, mock := newMockDAO(t)
+		mock.ExpectQuery("SELECT created_at").
+			WithArgs("user-1", int64(86400), 5).
+			WillReturnRows(sqlmock.NewRows([]string{"created_at"}).AddRow(t1).AddRow(t2))
+
+		got, err := dao.RecentAdCreations(ctx, "user-1", 24*time.Hour, 5)
+
+		require.NoError(t, err)
+		assert.Equal(t, []time.Time{t1, t2}, got)
+		require.NoError(t, mock.ExpectationsWereMet())
+	})
+
+	t.Run("returns error on query failure", func(t *testing.T) {
+		dao, mock := newMockDAO(t)
+		boom := errors.New("connection reset")
+		mock.ExpectQuery("SELECT created_at").WithArgs("user-1", int64(86400), 5).WillReturnError(boom)
+
+		_, err := dao.RecentAdCreations(ctx, "user-1", 24*time.Hour, 5)
+
+		require.ErrorIs(t, err, boom)
+	})
+}

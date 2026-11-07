@@ -3,6 +3,7 @@ package mock
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/mock"
 	adsdao "github.mpi-internal.com/leboncoin/backend-hiring-assessment/ads/internal/cmd/ads-api/dao"
@@ -76,4 +77,18 @@ func (m *Mock) Commit() error {
 // Rollback returns the error set on the mock.
 func (m *Mock) Rollback() error {
 	return m.Called().Error(0)
+}
+
+// LockOwner returns the error set on the mock.
+func (m *Mock) LockOwner(ctx context.Context, ownerID domain.UserID) error {
+	return m.Called(ctx, ownerID).Error(0)
+}
+
+// RecentAdCreations returns the times and the error set on the mock.
+func (m *Mock) RecentAdCreations(ctx context.Context, ownerID domain.UserID, window time.Duration, limit int) ([]time.Time, error) {
+	args := m.Called(ctx, ownerID, window, limit)
+
+	times, _ := args.Get(0).([]time.Time)
+
+	return times, args.Error(1)
 }
