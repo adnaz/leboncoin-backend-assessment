@@ -71,7 +71,7 @@ func TestSearchAds(t *testing.T) {
 		_, err := dao.SearchAds(ctx, adsdao.SearchAdsRequest{})
 
 		require.Error(t, err)
-		assert.ErrorIs(t, err, boom)
+		require.ErrorIs(t, err, boom)
 		require.NoError(t, mock.ExpectationsWereMet())
 	})
 }
@@ -108,7 +108,7 @@ func TestGetAdByID(t *testing.T) {
 		_, err := dao.GetAdByID(ctx, 99)
 
 		require.Error(t, err)
-		assert.ErrorIs(t, err, adsdao.ErrNotFound)
+		require.ErrorIs(t, err, adsdao.ErrNotFound)
 		require.NoError(t, mock.ExpectationsWereMet())
 	})
 
@@ -122,7 +122,7 @@ func TestGetAdByID(t *testing.T) {
 		_, err := dao.GetAdByID(ctx, 1)
 
 		require.Error(t, err)
-		assert.ErrorIs(t, err, boom)
+		require.ErrorIs(t, err, boom)
 		require.NoError(t, mock.ExpectationsWereMet())
 	})
 }
@@ -200,7 +200,7 @@ func TestCreateAd(t *testing.T) {
 		_, err := dao.CreateAd(ctx, req)
 
 		require.Error(t, err)
-		assert.ErrorIs(t, err, adsdao.ErrUnknownOwner)
+		require.ErrorIs(t, err, adsdao.ErrUnknownOwner)
 		require.NoError(t, mock.ExpectationsWereMet())
 	})
 
@@ -214,8 +214,8 @@ func TestCreateAd(t *testing.T) {
 		_, err := dao.CreateAd(ctx, req)
 
 		require.Error(t, err)
-		assert.ErrorIs(t, err, boom)
-		assert.NotErrorIs(t, err, adsdao.ErrUnknownOwner)
+		require.ErrorIs(t, err, boom)
+		require.NotErrorIs(t, err, adsdao.ErrUnknownOwner)
 		require.NoError(t, mock.ExpectationsWereMet())
 	})
 }
@@ -280,7 +280,7 @@ func TestTransaction(t *testing.T) {
 		tx, err := dao.Begin(ctx)
 
 		require.Error(t, err)
-		assert.ErrorIs(t, err, boom)
+		require.ErrorIs(t, err, boom)
 		assert.Nil(t, tx)
 		require.NoError(t, mock.ExpectationsWereMet())
 	})
