@@ -20,6 +20,8 @@ Here is the list of things to do:
 
 4) Stakeholders want the field `price_cents` renamed to `price` in float in the API. What do you do?
 
+   Answer: [docs/price-as-float.md](docs/price-as-float.md)
+
 5) Users are reporting that the bulk import is not working properly, it fails sometimes and when they try to run again, some ads appear twice, propose a fix.
 
 6) A user can now publish at most 5 ads per rolling 24 hours through `POST /ads`, implement this quota. It does not apply to the bulk import.
